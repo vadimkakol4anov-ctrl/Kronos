@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Али (DioBrando)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .character-container {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #0a2a3e 0%, #1a4a6e 50%, #0a2a3e 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 100, 200, 0.3);
+            border: 1px solid #2a6da3;
+            position: relative;
+        }
+        
+        .character-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(10, 42, 62, 0.8) 0%, rgba(26, 74, 110, 0.6) 100%);
+            z-index: 1;
+        }
+        
+        .character-header, .audio-section {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .character-header {
+            padding: 30px;
+            border-bottom: 1px solid rgba(42, 109, 163, 0.5);
+            text-align: center;
+        }
+        
+        .character-name {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .character-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .character-photo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(10, 42, 62, 0.2) 0%, rgba(26, 74, 110, 0.4) 100%);
+            border-radius: 10px;
+        }
+        
+        .character-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .character-title {
+            font-size: 20px;
+            color: #a8d1ff;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .character-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #e6f2ff;
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #2a8cd0, transparent);
+            margin: 25px 0;
+        }
+        
+        /* Стили для аудиоплеера */
+        .audio-section {
+            padding: 30px;
+        }
+        
+        .audio-player {
+            background: linear-gradient(135deg, rgba(10, 42, 62, 0.7) 0%, rgba(26, 74, 110, 0.5) 100%);
+            border-radius: 10px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(42, 109, 163, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .audio-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .play-btn {
+            background: linear-gradient(135deg, #1a5c8c 0%, #2a8cd0 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            font-size: 24px;
+        }
+        
+        .play-btn:hover {
+            background: linear-gradient(135deg, #2a8cd0 0%, #3aacff 100%);
+            transform: scale(1.05);
+        }
+        
+        .progress-container {
+            flex: 1;
+            background-color: rgba(10, 42, 62, 0.7);
+            height: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(42, 109, 163, 0.3);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #2a8cd0 0%, #3aacff 100%);
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(42, 140, 208, 0.5);
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 15px;
+            color: #a8d1ff;
+            font-size: 16px;
+        }
+        
+        .file-status {
+            margin-top: 15px;
+            color: #a8d1ff;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .character-photo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Контейнер персонажа -->
+    <div class="character-container">
+        <!-- Карточка персонажа -->
+        <div class="character-header">
+            <h1 class="character-name">Али (DioBrando)</h1>
+            
+            <!-- Добавлено фото под заголовком -->
+            <div class="character-photo">
+                <img src="Али 2025-10-07 193942.jpg" alt="Фото Али" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'">
+            </div>
+            
+            <p class="character-title">Начинающий футболист с 5000+ голов и любитель pvp</p>
+            
+            <div class="divider"></div>
+            
+            <p class="character-description">
+                Али - опытный игрок, посвятивший свою жизнь служению фури.. а не то. 
+                Дабившийся больших высот футболист из Azure Latch, также часто замечен за ученением драк в таких местах как Realm Rampage, Jump Showdown и т.д. В прошлом промышлял ловлей рыбы в особо крупных размерах, не страшась вылавливать таких редких особей как Bloop Fish, Narwhal, Mosslurker и прочие. <br> Отрицает половую связь с фембоем с фанпея.
+            </p>
+        </div>
+        
+        <!-- Аудиоплеер -->
+        <div class="audio-section">
+            <div class="audio-player">
+                <h2 class="audio-title">Слова Али</h2>
+                
+                <div class="player-controls">
+                    <button class="play-btn" id="playBtn">
+                        ▶
+                    </button>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+                
+                <div class="file-status" id="fileStatus">
+                    Попытка загрузки файла: D:\Всякое\Али.MP3
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    Не удалось загрузить аудиофайл напрямую. Для работы с локальным файлом поместите "Али.MP3" в ту же папку, что и этот HTML файл, и измените путь на "Али.MP3".
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Элементы аудиоплеера
+        const playBtn = document.getElementById('playBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const fileStatus = document.getElementById('fileStatus');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Создаем аудио элемент
+        const audio = new Audio();
+        
+        // Попытка загрузить файл по указанному пути
+        try {
+            // ПРЯМОЙ ПУТЬ - НЕ РАБОТАЕТ В БРАУЗЕРЕ
+            audio.src = 'D:\\Всякое\\Али.MP3';
+            fileStatus.textContent = 'Файл загружен: D:\\Всякое\\Али.MP3';
+            errorMessage.style.display = 'none';
+        } catch (error) {
+            fileStatus.textContent = 'Ошибка загрузки файла: ' + error.message;
+            errorMessage.style.display = 'block';
+            
+            // Альтернативный вариант - использовать тестовый аудиофайл
+            audio.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+            fileStatus.innerHTML = 'Используется демо-аудио. Для вашего файла следуйте инструкции выше.';
+        }
+        
+        // Флаг для отслеживания состояния воспроизведения
+        let isPlaying = false;
+        
+        // Функция для форматирования времени в минуты:секунды
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Обновление прогресс-бара и времени
+        function updateProgress(e) {
+            if (isPlaying) {
+                const { duration, currentTime } = e.srcElement;
+                // Обновление прогресс-бара
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                
+                // Обновление времени
+                currentTimeEl.textContent = formatTime(currentTime);
+                
+                // Обновление общей продолжительности
+                if (!isNaN(duration)) {
+                    durationEl.textContent = formatTime(duration);
+                }
+            }
+        }
+        
+        // Установка прогресса при клике на прогресс-бар
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            
+            if (duration && !isNaN(duration)) {
+                audio.currentTime = (clickX / width) * duration;
+            }
+        }
+        
+        // Воспроизведение/пауза
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.innerHTML = '▶';
+            } else {
+                audio.play().catch(error => {
+                    console.error('Ошибка воспроизведения:', error);
+                    errorMessage.textContent = 'Ошибка воспроизведения: ' + error.message;
+                    errorMessage.style.display = 'block';
+                });
+                playBtn.innerHTML = '❚❚';
+            }
+            isPlaying = !isPlaying;
+        }
+        
+        // События
+        playBtn.addEventListener('click', togglePlay);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('ended', () => {
+            isPlaying = false;
+            playBtn.innerHTML = '▶';
+        });
+        audio.addEventListener('loadeddata', () => {
+            fileStatus.textContent = 'Аудиофайл готов к воспроизведению';
+            errorMessage.style.display = 'none';
+        });
+        audio.addEventListener('error', () => {
+            fileStatus.textContent = 'Ошибка загрузки аудиофайла';
+            errorMessage.style.display = 'block';
+        });
+        progressContainer.addEventListener('click', setProgress);
+    </script>
+</body>
+</html>
